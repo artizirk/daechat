@@ -1,0 +1,21 @@
+.page-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px 10px; 
+}
+
+.mdl-layout__content {
+    flex: 1 0 auto;
+}
+
+#login-view {
+    margin: 0 auto;
+}
+
+.login-buttons {
+    display: flex;
+}
+
+.login-buttons > button {
+    flex: 1 0;
+}

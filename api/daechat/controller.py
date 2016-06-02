@@ -106,7 +106,7 @@ class SessionResource():
             else:
                 raise AuthenticationError()
         except (DoesNotExist, AuthenticationError) as err:
-            raise HTTPUnauthorized("AuthenticationError", "No such user or wrong password")
+            raise HTTPUnauthorized("AuthenticationError", "No such user or wrong password", "")
 
     @is_logged_in
     def on_delete(self, req, resp):

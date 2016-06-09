@@ -3,4 +3,5 @@ mongoengine==0.10.6
 passlib==1.6.5
 pymongo==3.2.2
 python-mimeparse==1.5.2
+requests==2.10.0
 six==1.10.0

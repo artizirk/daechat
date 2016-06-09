@@ -178,7 +178,6 @@ var app = {
                     })
                 }
             })
-
     },
 
     showMain: function() {
@@ -186,6 +185,7 @@ var app = {
         document.querySelector("#login-view").style.display = "none";
         document.querySelector("#main-view").style.display = "";
         app.setTitle("Main");
+        app.loadRooms();
     },
 
     setTitle: function(title) {
@@ -200,14 +200,135 @@ var app = {
         // show a notification
         var snackbarContainer = document.querySelector("#snackbar");
         snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    },
+
+    loadRooms: function() {
+        fetch("/api/v1/room", {
+            credentials:"same-origin",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(resp => {
+            if (resp.ok) {
+                return resp.json()
+            } else {
+                console.log(resp);
+            }
+        }).then(rooms => {
+            var roomListViewUl = document.querySelector("#room-list-view > ul");
+            while (roomListViewUl.firstChild) {
+                roomListViewUl.removeChild(roomListViewUl.firstChild);
+            }
+            rooms.forEach((room, i) => {
+                console.log(room);
+                let li = document.createElement("li");
+                li.className = "mdl-list__item";
+                if (i == 0) {
+                    li.className += " selected";
+                    app.currentChatRoom = room._id;
+                    app.loadChat(room._id);
+                }
+                li.appendChild(document.createTextNode(room.name))
+                li.onclick = function() {
+                    for (let el of roomListViewUl.childNodes){
+                        el.classList.remove("selected");
+                    }
+                    this.classList.add("selected");
+                    app.currentChatRoom = room._id;
+                    app.loadChat(room._id)
+                }
+                roomListViewUl.appendChild(li);
+            })
+            console.log(rooms);
+        })
+    },
+
+    loadChat: function(roomId) {
+        fetch(`/api/v1/room/${roomId}/message`, {
+            credentials:"same-origin",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(resp => {
+            if (resp.ok) {
+                return resp.json()
+            } else {
+                console.log(resp);
+            }
+        }).then(chatLines => {
+            var chatViewUl = document.querySelector("#chat-view > ul");
+            while (chatViewUl.firstChild) {
+                chatViewUl.removeChild(chatViewUl.firstChild);
+            }
+            chatLines.forEach((line, i) => {
+                console.log(line);
+
+                let li = document.createElement("li");
+                li.className = "mdl-list__item";
+                li.appendChild(document.createTextNode(line.message));
+                chatViewUl.appendChild(li);
+            })
+            if (chatViewUl.lastChild) {
+                chatViewUl.lastChild.scrollIntoView();
+            }
+            if (app.messageEventSource){
+                app.messageEventSource.close();
+            }
+            app.messageEventSource = new EventSource(`/api/v1/sub/room/${roomId}/message`, { withCredentials: true });
+            app.messageEventSource.onmessage = msg => {
+                let line = JSON.parse(msg.data);
+                let li = document.createElement("li");
+                li.className = "mdl-list__item";
+                li.appendChild(document.createTextNode(line.message));
+                chatViewUl.appendChild(li);
+                chatViewUl.lastChild.scrollIntoView();
+            }
+        })
+    },
+
+    doChatInput: function(ev) {
+        // handle chat input enter key press
+        if (ev.keyCode == 13) {
+            app.postMessage();
+        }
+    },
+
+    postMessage: function() {
+        var chatInput = document.querySelector("#chat-input");
+        if (chatInput.value == "") {
+            return;
+        }
+        fetch(`/api/v1/room/${app.currentChatRoom}/message`, {
+            method: "POST",
+            credentials:"same-origin",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                message: chatInput.value
+            })
+        }).then(resp => {
+            if (resp.ok) {
+                chatInput.value = "";
+                //app.loadChat(app.currentChatRoom);
+                return resp.json()
+            } else {
+                console.log(resp)
+            }
+        })
     }
 }
 
 // main entrypoint
-app.testLogin().then(function(resp){
-    console.log(resp);
-    if (!resp.ok) {
-        // we are not logged in
-        app.showLogin();
-    }
-})
+document.addEventListener('DOMContentLoaded', function() {
+    app.testLogin().then(function(resp){
+        console.log(resp);
+        if (!resp.ok) {
+            // we are not logged in
+            app.showLogin();
+        }
+    })
+}, false);

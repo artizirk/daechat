@@ -1,7 +1,9 @@
 from mongoengine.errors import ValidationError, FieldDoesNotExist, DoesNotExist, NotUniqueError
 
-from falcon import HTTPNotFound, HTTPMissingParam, HTTPBadRequest, HTTPUnauthorized, HTTP_CREATED
+from falcon import HTTPNotFound, HTTPMissingParam, HTTPBadRequest, HTTPUnauthorized, HTTP_CREATED, HTTP_BAD_REQUEST
 from passlib.apps import custom_app_context as password_ctx
+
+import requests
 
 from .models import Session, User, Room, Message
 from .tools import is_logged_in, require_args
@@ -126,7 +128,7 @@ class RoomResource():
         else:
             rooms = []
             for room in Room.objects[:10]:
-                rooms.apped(room.to_mongo())
+                rooms.append(room.to_mongo())
 
             resp.json = rooms
 
@@ -143,18 +145,29 @@ class RoomResource():
         resp.status = HTTP_CREATED
         resp.json = room.to_mongo()
 
+    @is_logged_in
+    def on_patch(self, req, resp, room_id):
+        room = Room(id=room_id)
+        if "name" in req.json:
+            room.name = req.json["name"]
+            room.save()
+            resp.json = room.to_mongo()
+        else:
+            resp.status = HTTP_BAD_REQUEST
+
+
 
 class MessageResource():
 
     def on_get(self, req, resp, room_id, message_id=None):
-        """Get a singe or list of messages in a room"""
+        """Get a single or list of messages in a room"""
         if message_id:
             resp.json = Message.objects.get(id=message_id).to_mongo()
         else:
             messages = []
-            for message in Message.objects[:10]:
+            for message in Message.objects(room=room_id).order_by('-time')[:10]:
                 messages.append(message.to_mongo())
-            resp.json = messages
+            resp.json = messages[::-1]
 
     @require_args({"message"})
     @is_logged_in
@@ -170,3 +183,5 @@ class MessageResource():
 
         resp.status = HTTP_CREATED
         resp.json = message.to_mongo()
+
+        requests.post("http://localhost/api/v1/pub/room/"+room_id+"/message", data=resp.body)

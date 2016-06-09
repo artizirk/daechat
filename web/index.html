@@ -30,68 +30,72 @@
   </header>
   
   <main class="mdl-layout__content">
-    <div class="page-content">
-
-
-      <!-- login-view -->
-      <div class="demo-card-wide mdl-card mdl-shadow--2dp" id="login-view">
-        <div class="mdl-card__title">
-          <h2 class="mdl-card__title-text">Login</h2>
-        </div>
-        <div class="mdl-card__supporting-text">
-          <form id="login-form" onkeydown="app.doLoginForm(event);">
-            <div class="mdl-textfield mdl-js-textfield">
-              <input class="mdl-textfield__input" type="text" id="email">
-              <label class="mdl-textfield__label" for="email">Email</label>
-            </div>
-            <div class="mdl-textfield mdl-js-textfield">
-              <input class="mdl-textfield__input" type="password" id="password">
-              <label class="mdl-textfield__label" for="password">Password</label>
-            </div>
-            <div class="mdl-textfield mdl-js-textfield" style="display:none;" id="password-again-container">
-              <input class="mdl-textfield__input" type="password" id="password-again">
-              <label class="mdl-textfield__label" for="password-again">Password again</label>
-            </div>
-          </form>
-        </div>
-        <div class="mdl-card__actions mdl-card--border login-buttons">
-          <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="app.doLogin();">
-            Login
-          </button>
-          <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="register-button" onclick="app.showRegister();">
-            Register
-          </button>
-        </div>
+    <!-- login-view -->
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp" id="login-view">
+      <div class="mdl-card__title">
+        <h2 class="mdl-card__title-text">Login</h2>
       </div>
-      <!-- /login-view -->
-
-      <main id="main-view">
-        Main
-        <aside id="room-list-view">
-          <ul>
-            <li><a>Test</a></li>
-          </ul>
-        </aside>
-
-        <article id="chat-view">
+      <div class="mdl-card__supporting-text">
+        <form id="login-form" onkeydown="app.doLoginForm(event);">
+          <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="text" id="email">
+            <label class="mdl-textfield__label" for="email">Email</label>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="password" id="password">
+            <label class="mdl-textfield__label" for="password">Password</label>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield" style="display:none;" id="password-again-container">
+            <input class="mdl-textfield__input" type="password" id="password-again">
+            <label class="mdl-textfield__label" for="password-again">Password again</label>
+          </div>
+        </form>
+      </div>
+      <div class="mdl-card__actions mdl-card--border login-buttons">
+        <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="app.doLogin();">
+          Login
+        </button>
+        <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="register-button" onclick="app.showRegister();">
+          Register
+        </button>
+      </div>
+    </div>
+    <!-- /login-view -->
+    <div class="page-content">
+      <main id="main-view" class="mdl-grid mdl-card mdl-shadow--2dp">
+        <div id="room-list-view" class="mdl-cell mdl-cell--4-col">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="room-search">
+            <label class="mdl-textfield__label" for="room-search">Search for rooms...</label>
+          </div>
+          <ul class="mdl-list"></ul>
           
-        </article>
+        </div>
+        <div id="chat-view" class="mdl-cell mdl-cell--8-col">
+          <ul class="mdl-list">
+            <li class="mdl-list__item">Loading</li>
+          </ul>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="chat-input-container">
+            <input class="mdl-textfield__input" type="text" id="chat-input" onkeydown="app.doChatInput(event);">
+            <label class="mdl-textfield__label" for="chat-input">Type your message...</label>
+          </div>
+        </div>
       </main>
 
     </div>
 
-
+    <!--footer class="mdl-mini-footer">
+      <div class="mdl-mini-footer__left-section">
+        <div class="mdl-logo">daechat</div>
+        <ul class="mdl-mini-footer__link-list">
+          <li><a href="https://github.com/artizirk/daechat">Use the source Luke!</a></li>
+        </ul>
+      </div>
+    </footer-->
 
   </main>
 
-  <footer class="mdl-mini-footer">
-    <div class="mdl-mini-footer__left-section">
-      <div class="mdl-logo">daechat</div>
-      <ul class="mdl-mini-footer__link-list">
-        <li><a href="https://github.com/artizirk/daechat">Use the source Luke!</a></li>
-      </ul>
-    </div>
-  </footer>
+  
 
   <div id="snackbar" class="mdl-js-snackbar mdl-snackbar">
     <div class="mdl-snackbar__text"></div>

@@ -1,12 +1,23 @@
+
 .page-content {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 15px 10px; 
+    flex: 1 0 auto;
+    max-width: 700px;
+    margin: 0 auto; 
+    width: 100%;
+    display: flex;
 }
 
 .mdl-layout__content {
-    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+    max-height: 500px;
 }
+
+.mdl-layout__content > footer {
+    flex: 0 1 auto;
+}
+
 
 #login-view {
     margin: 0 auto;
@@ -19,3 +30,51 @@
 .login-buttons > button {
     flex: 1 0;
 }
+
+#main-view {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    padding: 0 10px;
+}
+
+#room-list-view {
+    flex: 1 0 auto;
+}
+
+#room-list-view > ul {
+    padding: 0;
+    margin: 0;
+    margin-top:-10px;
+}
+
+#chat-view {
+    flex: 5 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-view > ul {
+    flex: 1 0 auto;
+    overflow-y: auto;
+    height: 0;
+}
+
+#chat-view > #chat-input-container {
+    width: 100%;
+}
+
+
+.mdl-list__item:hover {
+    background: whitesmoke;
+}
+
+.mdl-list__item.selected {
+    background: whitesmoke;
+}
+/*
+#room-list-view > div, #chat-view > div {
+    width: 100%;
+    height: 100%;
+} */

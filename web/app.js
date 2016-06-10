@@ -38,6 +38,10 @@ var app = {
                 resp.json().then(function(json){
                     app.showSnackbar({message:`You are now logged in with email ${json.email}`});
                 });
+                var chatViewUl = document.querySelector("#chat-view > ul");
+                while (chatViewUl.firstChild) {
+                    chatViewUl.removeChild(chatViewUl.firstChild);
+                }
             }
         });
         return req;

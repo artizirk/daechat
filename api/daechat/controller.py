@@ -1,6 +1,7 @@
 from mongoengine.errors import ValidationError, FieldDoesNotExist, DoesNotExist, NotUniqueError
+from mongoengine import Q
 
-from falcon import HTTPNotFound, HTTPMissingParam, HTTPBadRequest, HTTPUnauthorized, HTTP_CREATED, HTTP_BAD_REQUEST
+from falcon import HTTPNotFound, HTTPMissingParam, HTTPBadRequest, HTTPUnauthorized, HTTP_CREATED, HTTP_BAD_REQUEST, HTTP_CONFLICT
 from passlib.apps import custom_app_context as password_ctx
 
 import requests
@@ -126,8 +127,17 @@ class RoomResource():
             room = Room.objects.get(id=room_id)
             resp.json = room.to_mongo()
         else:
+
             rooms = []
-            for room in Room.objects[:10]:
+            q = req.params.get("q", None)
+            if q:
+                room_objs = Room.objects(__raw__={"name":{"$regex":q, "$options":"ix"}})
+            elif req.session:
+                room_objs = Room.objects(Q(users__contains=req.session.user) | Q(admins__contains=req.session.user))
+            else:
+                room_objs = Room.objects()
+
+            for room in room_objs:
                 rooms.append(room.to_mongo())
 
             resp.json = rooms
@@ -147,11 +157,19 @@ class RoomResource():
 
     @is_logged_in
     def on_patch(self, req, resp, room_id):
-        room = Room(id=room_id)
+        room = Room.objects.get(id=room_id)
         if "name" in req.json:
             room.name = req.json["name"]
             room.save()
             resp.json = room.to_mongo()
+        elif "join" in req.json:
+            if req.json["join"]:
+                if req.session.user not in room.users or req.session.user not in room.admins:
+                    room.users.append(req.session.user)
+                    room.save()
+                    resp.json = room.to_mongo()
+                else:
+                    resp.status = HTTP_CONFLICT
         else:
             resp.status = HTTP_BAD_REQUEST
 
@@ -162,11 +180,16 @@ class MessageResource():
     def on_get(self, req, resp, room_id, message_id=None):
         """Get a single or list of messages in a room"""
         if message_id:
+            message = Message.objects.get(id=message_id)
+            msg = message.to_mongo()
+            msg["author"] = message.author.email
             resp.json = Message.objects.get(id=message_id).to_mongo()
         else:
             messages = []
             for message in Message.objects(room=room_id).order_by('-time')[:10]:
-                messages.append(message.to_mongo())
+                msg = message.to_mongo()
+                msg["author"] = message.author.email
+                messages.append(msg)
             resp.json = messages[::-1]
 
     @require_args({"message"})
@@ -182,6 +205,8 @@ class MessageResource():
         message.save()
 
         resp.status = HTTP_CREATED
-        resp.json = message.to_mongo()
+        msg = message.to_mongo()
+        msg["author"] = message.author.email
+        resp.json = msg
 
         requests.post("http://localhost/api/v1/pub/room/"+room_id+"/message", data=resp.body)

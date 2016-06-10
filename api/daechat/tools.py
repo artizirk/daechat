@@ -53,10 +53,11 @@ class JsonRequest(FalconRequest):
             try:
                 self._session = Session.objects.get(sid=sid)
             except DoesNotExist as err:
-                raise SessionNotFound()
-            return self._session
+                self._session = None
         else:
-            raise SessionNotFound()
+            self._session = None
+        return self._session
+        
 
 
 class JsonResponse(FalconResponse):
@@ -93,7 +94,7 @@ class JsonResponse(FalconResponse):
 def is_logged_in(f):
     @wraps(f)
     def wrapper(self, req, resp, *args, **kwargs):
-        if not req.session and not req.session.user:
+        if not req.session or not req.session.user:
             raise SessionNotFound
         return f(self, req, resp, *args, **kwargs)
     return wrapper

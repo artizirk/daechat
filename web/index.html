@@ -17,8 +17,6 @@
       <i class="material-icons">menu</i>
     </button>
     <ul class="mdl-menu mdl-js-menu" for="main-menu">
-      <li class="mdl-menu__item" onclick="app.showLogin();">Login</li>
-      <li class="mdl-menu__item" onclick="app.showMain();">Main</li>
       <li class="mdl-menu__item" onclick="app.doLogout();">Logout</li>
     </ul>
 
@@ -65,7 +63,7 @@
       <main id="main-view" class="mdl-grid mdl-card mdl-shadow--2dp">
         <div id="room-list-view" class="mdl-cell mdl-cell--4-col">
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="room-search">
+            <input class="mdl-textfield__input" type="text" id="room-search" onkeydown="app.doRoomSearch(event);">
             <label class="mdl-textfield__label" for="room-search">Search for rooms...</label>
           </div>
           <ul class="mdl-list"></ul>
@@ -73,7 +71,7 @@
         </div>
         <div id="chat-view" class="mdl-cell mdl-cell--8-col">
           <ul class="mdl-list">
-            <li class="mdl-list__item">Loading</li>
+            <li class="mdl-list__item">← search or create a new room</li>
           </ul>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="chat-input-container">
             <input class="mdl-textfield__input" type="text" id="chat-input" onkeydown="app.doChatInput(event);">

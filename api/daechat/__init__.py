@@ -23,10 +23,10 @@ class About():
 mongoengine.connect('daechat', connect=False)
 
 app = application = falcon.API(request_type=JsonRequest, response_type=JsonResponse)
-app.add_error_handler(ValidationError, error_handler)
+#app.add_error_handler(ValidationError, error_handler)
 #app.add_error_handler(FieldDoesNotExist, error_handler)
 #app.add_error_handler(ValueError, error_handler)
-app.add_error_handler(NotImplementedError, error_handler)
+#app.add_error_handler(NotImplementedError, error_handler)
 
 app.add_route("/", About())
 app.add_route("/session", SessionResource())

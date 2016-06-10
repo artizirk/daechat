@@ -4,7 +4,7 @@
 
 A simple realtime messageboard using modern web technologies like RESTful API's,  Server Send Events, Javascript ES6 and CSS3
 
-Requires a latest Google Chrome (v51+) or latest FireFox to work
+Requires a latest Google Chrome (v51+) or latest Firefox to work
 
 ![ScreenShot](http://i.imgur.com/XrtdDTB.png)
 
@@ -13,12 +13,13 @@ Requires a latest Google Chrome (v51+) or latest FireFox to work
 
 * VanillaJS
 * Google Material Lite 
+* Server Send Events (SSE)
 
 ## Backend
 
 * Python 3
 * Falcon RESTful api framework
 * MongoDB as a database
-* uWSGI and nginx
+* uWSGI and nginx with nchan plugin for easy pub-sub model
 
 
